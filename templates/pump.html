@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pump {{ pump_id }} - Challawa SCADA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a2c4a 100%);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #2c3e50 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .logo-section a:hover {
+            color: #60a5fa;
+        }
+
+        .app-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 8px 0;
+        }
+
+        .app-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .status-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .timestamp {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Status Cards */
+        .pump-status-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a2f3f 100%);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .status-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .status-value {
+            font-size: 40px;
+            margin: 10px 0;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .status-value.active {
+            color: var(--success);
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-value.inactive {
+            color: var(--warning);
+        }
+
+        .status-value.trip {
+            color: var(--danger);
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .status-indicator-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Gauges Section */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .gauge-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .gauge-wrapper {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a2f3f 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .gauge-title {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Pressure Gauge */
+        .pressure-gauge-svg {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .gauge-background {
+            fill: none;
+            stroke: #334155;
+            stroke-width: 3;
+        }
+
+        .gauge-arc-safe {
+            fill: none;
+            stroke: var(--success);
+            stroke-width: 8;
+            opacity: 0.7;
+        }
+
+        .gauge-arc-warning {
+            fill: none;
+            stroke: var(--warning);
+            stroke-width: 8;
+            opacity: 0.7;
+        }
+
+        .gauge-arc-danger {
+            fill: none;
+            stroke: var(--danger);
+            stroke-width: 8;
+            opacity: 0.7;
+        }
+
+        .gauge-needle {
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .gauge-center {
+            fill: var(--primary);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+        }
+
+        .gauge-text {
+            font-size: 13px;
+            fill: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .gauge-display {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .gauge-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .gauge-unit {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Speedometer (Car-style) */
+        .speedometer {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .speedometer-outer {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #2c3e50, #1a2f3f);
+            border: 4px solid var(--primary);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .speedometer-inner {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #334155, #0f172a);
+            border: 2px solid var(--border);
+        }
+
+        .speedometer-scale {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scale-tick {
+            position: absolute;
+            width: 2px;
+            height: 12px;
+            background: var(--text-secondary);
+            transform-origin: center 140px;
+        }
+
+        .scale-number {
+            position: absolute;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 600;
+            transform: translate(-50%, -50%);
+        }
+
+        .speedometer-needle {
+            position: absolute;
+            width: 4px;
+            height: 110px;
+            background: linear-gradient(to top, var(--primary), #60a5fa);
+            border-radius: 2px;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+        }
+
+        .speedometer-center {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+            z-index: 10;
+        }
+
+        .speedometer-max {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gauge-value {
+                font-size: 36px;
+            }
+
+            .speedometer-outer {
+                width: 240px;
+                height: 240px;
+            }
+
+            .speedometer-inner {
+                width: 200px;
+                height: 200px;
+            }
+
+            .speedometer-needle {
+                height: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="/" class="back-link">← Back to Dashboard</a>
+                    <h1 class="app-title">Pump {{ pump_id }}</h1>
+                    <p class="app-subtitle">Real-time Monitoring</p>
+                </div>
+                <div class="status-section">
+                    <div class="status-indicator">
+                        <span class="status-dot" id="plc-status"></span>
+                        <span class="status-text" id="plc-status-text">Connected</span>
+                    </div>
+                    <div class="timestamp" id="timestamp">--:--:--</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard">
+            <!-- Pump Status -->
+            <section class="pump-status-section">
+                <h2 class="section-title">Status</h2>
+                <div class="status-cards-grid">
+                    <div class="status-card">
+                        <div class="status-label">Ready</div>
+                        <div class="status-value" id="status-ready">●</div>
+                        <div class="status-indicator-text">System Ready</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-label">Running</div>
+                        <div class="status-value" id="status-running">●</div>
+                        <div class="status-indicator-text">Operating</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-label">Trip</div>
+                        <div class="status-value" id="status-trip">●</div>
+                        <div class="status-indicator-text">Fault Condition</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gauges Section -->
+            <section class="metrics-grid">
+                <!-- Pressure Gauge -->
+                <div class="gauge-container">
+                    <div class="gauge-wrapper">
+                        <h3 class="gauge-title">Pressure</h3>
+                        <svg class="pressure-gauge-svg" viewBox="0 0 200 130">
+                            <!-- Background circle -->
+                            <circle cx="100" cy="100" r="90" class="gauge-background"></circle>
+                            
+                            <!-- Green zone (0-3.3 bar) -->
+                            <path d="M 100 10 A 90 90 0 0 1 154.5 115.9" class="gauge-arc-safe"></path>
+                            
+                            <!-- Yellow zone (3.3-6.7 bar) -->
+                            <path d="M 154.5 115.9 A 90 90 0 0 1 45.5 115.9" class="gauge-arc-warning"></path>
+                            
+                            <!-- Red zone (6.7-10 bar) -->
+                            <path d="M 45.5 115.9 A 90 90 0 0 1 100 10" class="gauge-arc-danger"></path>
+                            
+                            <!-- Scale labels -->
+                            <text x="100" y="25" class="gauge-text" text-anchor="middle">10</text>
+                            <text x="155" y="105" class="gauge-text" text-anchor="middle">0</text>
+                            <text x="45" y="105" class="gauge-text" text-anchor="middle">5</text>
+                            
+                            <!-- Needle -->
+                            <g class="gauge-needle" id="pressure-needle" transform="rotate(-90 100 100)">
+                                <rect x="98" y="30" width="4" height="70" fill="#3b82f6" rx="2"></rect>
+                            </g>
+                            
+                            <!-- Center circle -->
+                            <circle cx="100" cy="100" r="8" class="gauge-center"></circle>
+                        </svg>
+                        <div class="gauge-display">
+                            <div class="gauge-value" id="pressure-value">0.0</div>
+                            <div class="gauge-unit">bar</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Speedometer (Car-style) -->
+                <div class="gauge-container">
+                    <div class="gauge-wrapper">
+                        <h3 class="gauge-title">Speed</h3>
+                        <div class="speedometer">
+                            <div class="speedometer-outer">
+                                <div class="speedometer-inner"></div>
+                                
+                                <!-- Scale ticks and numbers -->
+                                <div class="speedometer-scale" id="speedometer-scale"></div>
+                                
+                                <!-- Needle -->
+                                <div class="speedometer-needle" id="speed-needle"></div>
+                                
+                                <!-- Center dot -->
+                                <div class="speedometer-center"></div>
+                                
+                                <!-- Max label -->
+                                <div class="speedometer-max">0 - 50 Hz</div>
+                            </div>
+                        </div>
+                        <div class="gauge-display">
+                            <div class="gauge-value" id="speed-value">0.0</div>
+                            <div class="gauge-unit">Hz</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Challawa Industrial Systems. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/pump-detail.js') }}"></script>
+    <script>
+        const PUMP_ID = {{ pump_id }};
+    </script>
+</body>
+</html>

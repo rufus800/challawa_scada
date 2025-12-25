@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challawa SCADA Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1 class="app-title">Challawa SCADA</h1>
+                    <p class="app-subtitle">Industrial Pump Monitoring System</p>
+                </div>
+                <div class="header-nav">
+                    <select id="pump-select" class="pump-dropdown-header">
+                        <option value="">Pump Navigation</option>
+                        <option value="1">Pump 1</option>
+                        <option value="2">Pump 2</option>
+                        <option value="3">Pump 3</option>
+                        <option value="4">Pump 4</option>
+                        <option value="5">Pump 5</option>
+                        <option value="6">Pump 6</option>
+                        <option value="7">Pump 7</option>
+                        <option value="reports">📊 Reports</option>
+                    </select>
+                </div>
+                <div class="status-section">
+                    <div class="status-indicator">
+                        <span class="status-dot" id="plc-status"></span>
+                        <span class="status-text" id="plc-status-text">Connecting...</span>
+                    </div>
+                    <div class="timestamp" id="timestamp"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard">
+            <!-- System Alarm Alert -->
+            <section class="alarm-section">
+                <div class="alarm-card" id="alarm-card">
+                    <div class="alarm-indicator" id="alarm-indicator"></div>
+                    <div class="alarm-content">
+                        <h2 class="alarm-title">System Alarm Status</h2>
+                        <p class="alarm-message" id="alarm-message">Normal Operation</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pressure Setpoints Grid -->
+            <section class="setpoints-section">
+                <h2 class="section-title">Pump Pressure Setpoints</h2>
+                <div class="setpoints-grid" id="setpoints-container">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Challawa Industrial Systems. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

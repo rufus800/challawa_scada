@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Reports - Challawa SCADA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="/" class="back-link">← Back to Dashboard</a>
+                    <h1 class="app-title">System Reports & Events</h1>
+                    <p class="app-subtitle">Trip Events & Status Changes</p>
+                </div>
+                <div class="header-nav">
+                    <select id="pump-select" class="pump-dropdown-header">
+                        <option value="">Pump Navigation</option>
+                        <option value="1">Pump 1</option>
+                        <option value="2">Pump 2</option>
+                        <option value="3">Pump 3</option>
+                        <option value="4">Pump 4</option>
+                        <option value="5">Pump 5</option>
+                        <option value="6">Pump 6</option>
+                        <option value="7">Pump 7</option>
+                        <option value="reports" selected>📊 Reports</option>
+                    </select>
+                </div>
+                <div class="status-section">
+                    <div class="status-indicator">
+                        <span class="status-dot" id="plc-status"></span>
+                        <span class="status-text" id="plc-status-text">Connecting...</span>
+                    </div>
+                    <div class="timestamp" id="timestamp"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard">
+            <!-- Export Section -->
+            <section class="reports-controls">
+                <div class="controls-group">
+                    <button class="btn-export" id="btn-export-pdf" title="Download all events as PDF">
+                        📥 Download PDF Report
+                    </button>
+                    <button class="btn-refresh" id="btn-refresh" title="Refresh data from database">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+                <div class="time-filter-group">
+                    <label>Time Range:</label>
+                    <select id="time-range-filter" class="filter-select">
+                        <option value="24">Last 24 Hours</option>
+                        <option value="168">Last 7 Days</option>
+                        <option value="720">Last 30 Days</option>
+                        <option value="8760">Last Year</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Trip Events Section -->
+            <section class="reports-section trip-events-section">
+                <h2 class="section-title">⚠️ Pump Trip Events</h2>
+                <div class="table-wrapper">
+                    <table class="events-table" id="trip-events-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Pump ID</th>
+                                <th>Trip Status</th>
+                                <th>Pressure (bar)</th>
+                                <th>Speed (Hz)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trip-events-tbody">
+                            <tr class="loading-row">
+                                <td colspan="5" class="loading-text">Loading trip events...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-info" id="trip-events-info"></div>
+            </section>
+
+            <!-- Status Events Section -->
+            <section class="reports-section status-events-section">
+                <h2 class="section-title">📋 Pump Status Events</h2>
+                <div class="table-wrapper">
+                    <table class="events-table" id="status-events-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Pump ID</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                                <th>Pressure (bar)</th>
+                                <th>Speed (Hz)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="status-events-tbody">
+                            <tr class="loading-row">
+                                <td colspan="6" class="loading-text">Loading status events...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-info" id="status-events-info"></div>
+            </section>
+
+            <!-- Summary Statistics -->
+            <section class="summary-stats">
+                <h2 class="section-title">System Summary</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Pumps</div>
+                        <div class="stat-value" id="stat-total">7</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Trip Events</div>
+                        <div class="stat-value trip-count" id="stat-trip-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Status Events</div>
+                        <div class="stat-value status-count" id="stat-status-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Events</div>
+                        <div class="stat-value total-count" id="stat-total-events">0</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Challawa Industrial Systems. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+</body>
+</html>
