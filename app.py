@@ -538,10 +538,15 @@ class PLCManager:
         logger.info("Stopped PLC polling")
     
     def _poll_loop(self, interval: float):
-        """Polling loop - reads data and saves to database"""
-        global db_manager
+        """Polling loop - reads data and saves to database and broadcasts to clients"""
+        global db_manager, socketio
         while self._running:
             self.read_data()
+            # Emit live data updates to all connected clients
+            try:
+                emit_data_updates()
+            except Exception as e:
+                logger.debug(f"Error emitting data updates: {e}")
             
             # Save each pump's data to database and detect state changes
             for pump_id in range(1, 8):
@@ -1015,27 +1020,42 @@ def handle_update_request():
 
 def emit_data_updates():
     """Emit data updates to all connected clients"""
-    data = plc_manager.get_data()
-    
-    # Calculate alarm state
-    alarm_active = any(data.get(f"pump_{i}", {}).get("trip", False) for i in range(1, 8))
-    
-    # Prepare home page data (pressure setpoints only)
-    home_data = {
-        "timestamp": datetime.now().isoformat(),
-        "system_alarm": alarm_active,
-        "pressure_setpoints": {}
-    }
-    
-    for pump_id in range(1, 8):
-        pump_key = f"pump_{pump_id}"
-        if pump_key in data and "pressure_setpoint" in data[pump_key]:
-            home_data["pressure_setpoints"][pump_id] = {
-                "value": data[pump_key]["pressure_setpoint"],
-                "unit": "bar"
-            }
-    
-    socketio.emit('data_update', home_data)
+    try:
+        data = plc_manager.get_data()
+        
+        # Calculate alarm state - check if ANY pump has trip active
+        alarm_active = any(data.get(f"pump_{i}", {}).get("trip", False) for i in range(1, 8))
+        
+        # Prepare home page data with all critical information
+        home_data = {
+            "timestamp": datetime.now().isoformat(),
+            "system_alarm": alarm_active,
+            "plc_connected": plc_manager.connected,
+            "pressure_setpoints": {},
+            "pump_status": {}  # Include pump status for real-time monitoring
+        }
+        
+        for pump_id in range(1, 8):
+            pump_key = f"pump_{pump_id}"
+            if pump_key in data:
+                pump_data = data[pump_key]
+                if "pressure_setpoint" in pump_data:
+                    home_data["pressure_setpoints"][pump_id] = {
+                        "value": pump_data["pressure_setpoint"],
+                        "unit": "bar"
+                    }
+                # Include pump status for monitoring
+                home_data["pump_status"][pump_id] = {
+                    "ready": pump_data.get("ready", False),
+                    "running": pump_data.get("running", False),
+                    "trip": pump_data.get("trip", False),
+                    "pressure": pump_data.get("pressure", 0),
+                    "speed": pump_data.get("speed", 0)
+                }
+        
+        socketio.emit('data_update', home_data)
+    except Exception as e:
+        logger.error(f"Error in emit_data_updates: {e}")
 
 # ===============================
 # SHUTDOWN HANDLER
@@ -1061,7 +1081,8 @@ if __name__ == '__main__':
         # Connect to PLC
         logger.info("Initializing Challawa SCADA System...")
         plc_manager.connect()
-        plc_manager.start_polling(interval=1.0)
+        # Increased polling frequency to 500ms (0.5s) for live data accuracy
+        plc_manager.start_polling(interval=0.5)
         
         # Start Flask server
         logger.info("Starting Flask server on 0.0.0.0:5000")

@@ -95,30 +95,30 @@ function handleDataUpdate(data) {
 function updateAlarmStatus(alarmActive) {
     const alarmCard = document.getElementById('alarm-card');
     const alarmMessage = document.getElementById('alarm-message');
+    const indicator = alarmCard?.querySelector('.alarm-indicator');
 
-    if (!alarmCard || !alarmMessage) return;
+    if (!alarmCard || !alarmMessage || !indicator) return;
 
     if (alarmActive) {
         alarmCard.classList.add('active');
         alarmMessage.textContent = 'SYSTEM ALARM ACTIVE - Immediate Action Required!';
         alarmMessage.style.color = '#ef4444';
-
-        // Intense red flashing
-        const indicator = alarmCard.querySelector('.alarm-indicator');
-        if (indicator) {
-            indicator.style.animation = 'alarm-flash 0.4s ease-in-out infinite';
-        }
+        
+        // Clear all previous styles and apply alarm animation
+        indicator.style.removeProperty('background');
+        indicator.style.removeProperty('box-shadow');
+        indicator.style.animation = 'alarm-flash 0.4s ease-in-out infinite';
+        indicator.style.background = '#ef4444';
     } else {
         alarmCard.classList.remove('active');
         alarmMessage.textContent = 'Normal Operation';
         alarmMessage.style.color = '';
-
-        const indicator = alarmCard.querySelector('.alarm-indicator');
-        if (indicator) {
-            indicator.style.animation = 'none';
-            indicator.style.background = 'var(--success)';
-            indicator.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.2)';
-        }
+        
+        // Properly reset all styles when alarm is inactive
+        indicator.style.animation = 'none';
+        indicator.style.removeProperty('animation');
+        indicator.style.background = '#10b981';
+        indicator.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.2)';
     }
 }
 
@@ -202,10 +202,10 @@ function updatePLCStatus(connected) {
 // PERIODIC UPDATES
 // ============================== 
 function startPeriodicUpdates() {
-    // Update every 2 seconds
+    // Update every 1 second for live data when PLC is connected
     updateInterval = setInterval(() => {
         fetchAndUpdateData();
-    }, 2000);
+    }, 1000);
 }
 
 function stopPeriodicUpdates() {
