@@ -1,0 +1,19 @@
+[Unit]
+Description=Challawa SCADA System - Industrial Pump Monitoring Dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/root/challawa_scada
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+ExecStart=/usr/bin/python3 /home/root/challawa_scada/app.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=challawa-scada
+
+[Install]
+WantedBy=multi-user.target
