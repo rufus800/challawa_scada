@@ -503,7 +503,7 @@ class PLCManager:
             # Simulate some pumps running and some not
             pump_data["ready"] = random.random() > 0.3
             pump_data["running"] = pump_data["ready"] and random.random() > 0.5
-            pump_data["trip"] = random.random() > 0.95
+            pump_data["trip"] = False  # No trips in simulated data - trips are error conditions
             
             # Simulate pressure and speed with some variation
             if pump_data["running"]:

@@ -47,12 +47,44 @@ function initializeSocket() {
 function setupEventListeners() {
     const pumpSelect = document.getElementById('pump-select');
     if (pumpSelect) {
-        pumpSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'reports') {
-                window.location.href = '/reports';
-            } else if (e.target.value) {
-                window.location.href = `/pump/${e.target.value}`;
+        // Reset to empty
+        pumpSelect.value = '';
+        
+        const handlePumpChange = function() {
+            const selectedValue = this.value;
+            if (selectedValue) {
+                // Reset immediately
+                this.value = '';
+                
+                // Visual feedback
+                const dashboard = document.querySelector('.dashboard');
+                if (dashboard) {
+                    dashboard.style.opacity = '0.6';
+                    dashboard.style.pointerEvents = 'none';
+                }
+                
+                // Navigate
+                window.location.href = '/pump/' + selectedValue;
             }
+        };
+        
+        pumpSelect.addEventListener('change', handlePumpChange);
+        pumpSelect.addEventListener('input', handlePumpChange);
+    }
+
+    const reportsLink = document.getElementById('reports-link');
+    if (reportsLink) {
+        reportsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Visual feedback
+            const dashboard = document.querySelector('.dashboard');
+            if (dashboard) {
+                dashboard.style.opacity = '0.6';
+                dashboard.style.pointerEvents = 'none';
+            }
+            
+            window.location.href = '/reports';
         });
     }
 }
@@ -194,6 +226,9 @@ function updatePLCStatus(connected) {
             statusDot.style.color = '#ef4444';
             statusDot.classList.remove('active');
             statusText.textContent = 'Disconnected';
+            
+            // When PLC is disconnected, force alarm to inactive state (green)
+            updateAlarmStatus(false);
         }
     }
 }

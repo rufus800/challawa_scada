@@ -17,11 +17,65 @@ document.addEventListener('DOMContentLoaded', () => {
     initSpeedometer();
     fetchPumpData();
     updateTimestamp();
+    setupEventListeners();
     
     // Start periodic updates
     setInterval(fetchPumpData, 2000);
     setInterval(updateTimestamp, 1000);
 });
+
+// Setup event listeners
+function setupEventListeners() {
+    const pumpSelect = document.getElementById('pump-select');
+    if (pumpSelect) {
+        // Set current pump as selected
+        pumpSelect.value = PUMP_ID.toString();
+        
+        pumpSelect.addEventListener('change', (e) => {
+            const selectedValue = e.target.value;
+            if (selectedValue && selectedValue !== PUMP_ID.toString()) {
+                // Visual feedback
+                const dashboard = document.querySelector('.dashboard');
+                if (dashboard) {
+                    dashboard.style.opacity = '0.6';
+                    dashboard.style.pointerEvents = 'none';
+                }
+                
+                window.location.href = '/pump/' + selectedValue;
+            }
+        });
+        
+        pumpSelect.addEventListener('input', (e) => {
+            const selectedValue = e.target.value;
+            if (selectedValue && selectedValue !== PUMP_ID.toString()) {
+                // Visual feedback
+                const dashboard = document.querySelector('.dashboard');
+                if (dashboard) {
+                    dashboard.style.opacity = '0.6';
+                    dashboard.style.pointerEvents = 'none';
+                }
+                
+                window.location.href = '/pump/' + selectedValue;
+            }
+        });
+    }
+
+    const reportsLink = document.getElementById('reports-link');
+    if (reportsLink) {
+        reportsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Visual feedback
+            const dashboard = document.querySelector('.dashboard');
+            if (dashboard) {
+                dashboard.style.opacity = '0.6';
+                dashboard.style.pointerEvents = 'none';
+            }
+            
+            window.location.href = '/reports';
+        });
+    }
+}
 
 // Socket.IO connection handlers
 function initializeSocket() {
@@ -78,10 +132,10 @@ function initSpeedometer() {
             label.className = 'scale-number';
             label.textContent = Math.round(value);
             
-            const radius = 140;
+            const radius = 90;
             const radian = (angle + 90) * Math.PI / 180;
-            const x = 140 + radius * Math.cos(radian);
-            const y = 140 + radius * Math.sin(radian);
+            const x = 90 + radius * Math.cos(radian);
+            const y = 90 + radius * Math.sin(radian);
             
             label.style.left = x + 'px';
             label.style.top = y + 'px';

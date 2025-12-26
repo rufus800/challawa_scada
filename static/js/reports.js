@@ -12,10 +12,15 @@ let currentTimeRange = 24;
 // INITIALIZATION
 // ============================== 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('✓ DOMContentLoaded fired in reports.js');
     initializeSocket();
+    console.log('✓ Socket initialized');
     setupEventListeners();
+    console.log('✓ Event listeners setup');
     fetchAllEvents();
+    console.log('✓ Initial events fetched');
     startPeriodicUpdates();
+    console.log('✓ Periodic updates started');
 });
 
 // ============================== 
@@ -47,13 +52,49 @@ function initializeSocket() {
 // EVENT LISTENERS
 // ============================== 
 function setupEventListeners() {
+    console.log('=== SETTING UP EVENT LISTENERS ===');
+    
     const pumpSelect = document.getElementById('pump-select');
+    console.log('Pump select element:', pumpSelect);
+    console.log('Pump select current value:', pumpSelect ? pumpSelect.value : 'N/A');
+    
     if (pumpSelect) {
-        pumpSelect.addEventListener('change', (e) => {
-            if (e.target.value) {
-                window.location.href = `/pump/${e.target.value}`;
+        // Reset to empty on page load
+        pumpSelect.value = '';
+        console.log('Reset pump select to empty value');
+        
+        // Handler function
+        const handlePumpChange = function() {
+            const selectedValue = this.value;
+            console.log('===== PUMP SELECTION CHANGED =====');
+            console.log('New value:', selectedValue);
+            
+            if (selectedValue) {
+                console.log('✓ Valid pump selected:', selectedValue);
+                
+                // Visual feedback
+                document.body.style.opacity = '0.6';
+                document.body.style.pointerEvents = 'none';
+                
+                // Reset select immediately
+                this.value = '';
+                
+                // Navigate
+                const url = '/pump/' + selectedValue;
+                console.log('Navigating to:', url);
+                window.location.href = url;
+            } else {
+                console.log('Empty value selected, no action');
             }
-        });
+        };
+        
+        // Bind both change and input events for compatibility
+        pumpSelect.addEventListener('change', handlePumpChange);
+        pumpSelect.addEventListener('input', handlePumpChange);
+        
+        console.log('Event listeners attached');
+    } else {
+        console.error('✗ CRITICAL: Pump select not found!');
     }
 
     const timeRangeFilter = document.getElementById('time-range-filter');

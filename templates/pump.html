@@ -118,13 +118,13 @@
 
         /* Status Cards */
         .pump-status-section {
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             color: var(--text-primary);
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -132,15 +132,15 @@
 
         .status-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
 
         .status-card {
             background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a2f3f 100%);
             border: 2px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 12px;
             text-align: center;
             transition: all 0.3s ease;
         }
@@ -151,17 +151,17 @@
         }
 
         .status-label {
-            font-size: 12px;
+            font-size: 10px;
             text-transform: uppercase;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 600;
         }
 
         .status-value {
-            font-size: 40px;
-            margin: 10px 0;
-            color: #999;
+            font-size: 28px;
+            margin: 6px 0;
+            color: #666;
             transition: color 0.3s ease;
         }
 
@@ -171,7 +171,7 @@
         }
 
         .status-value.inactive {
-            color: var(--warning);
+            color: #666;
         }
 
         .status-value.trip {
@@ -185,16 +185,16 @@
         }
 
         .status-indicator-text {
-            font-size: 12px;
+            font-size: 9px;
             color: var(--text-secondary);
         }
 
         /* Gauges Section */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         .gauge-container {
@@ -205,28 +205,28 @@
         .gauge-wrapper {
             background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a2f3f 100%);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 12px;
+            padding: 15px;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 280px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         }
 
         .gauge-title {
-            font-size: 18px;
+            font-size: 13px;
             font-weight: 600;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: var(--text-primary);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         /* Pressure Gauge */
         .pressure-gauge-svg {
             width: 100%;
             height: auto;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .gauge-background {
@@ -274,23 +274,23 @@
 
         .gauge-display {
             text-align: center;
-            padding-top: 20px;
+            padding-top: 10px;
             border-top: 1px solid var(--border);
         }
 
         .gauge-value {
-            font-size: 48px;
+            font-size: 32px;
             font-weight: 700;
             color: var(--primary);
             font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             line-height: 1;
         }
 
         .gauge-unit {
-            font-size: 16px;
+            font-size: 11px;
             color: var(--text-secondary);
-            margin-top: 8px;
+            margin-top: 4px;
             text-transform: uppercase;
             font-weight: 600;
         }
@@ -303,17 +303,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .speedometer-outer {
             position: relative;
-            width: 280px;
-            height: 280px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #2c3e50, #1a2f3f);
-            border: 4px solid var(--primary);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 3px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -321,8 +321,8 @@
 
         .speedometer-inner {
             position: absolute;
-            width: 240px;
-            height: 240px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #334155, #0f172a);
             border: 2px solid var(--border);
@@ -339,15 +339,15 @@
 
         .scale-tick {
             position: absolute;
-            width: 2px;
-            height: 12px;
+            width: 1.5px;
+            height: 8px;
             background: var(--text-secondary);
-            transform-origin: center 140px;
+            transform-origin: center 75px;
         }
 
         .scale-number {
             position: absolute;
-            font-size: 13px;
+            font-size: 9px;
             color: var(--text-primary);
             font-weight: 600;
             transform: translate(-50%, -50%);
@@ -355,8 +355,8 @@
 
         .speedometer-needle {
             position: absolute;
-            width: 4px;
-            height: 110px;
+            width: 2px;
+            height: 45px;
             background: linear-gradient(to top, var(--primary), #60a5fa);
             border-radius: 2px;
             bottom: 50%;
@@ -364,35 +364,35 @@
             transform-origin: bottom;
             transform: translateX(-50%) rotate(-90deg);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.5);
         }
 
         .speedometer-center {
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--primary);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.5);
             z-index: 10;
         }
 
         .speedometer-max {
             position: absolute;
-            bottom: 15px;
+            bottom: 8px;
             width: 100%;
             text-align: center;
-            font-size: 12px;
+            font-size: 9px;
             color: var(--text-secondary);
         }
 
         /* Footer */
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             color: var(--text-secondary);
-            font-size: 13px;
-            margin-top: 40px;
+            font-size: 12px;
+            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -406,17 +406,17 @@
             }
 
             .gauge-value {
-                font-size: 36px;
+                font-size: 28px;
             }
 
             .speedometer-outer {
-                width: 240px;
-                height: 240px;
+                width: 160px;
+                height: 160px;
             }
 
             .speedometer-inner {
-                width: 200px;
-                height: 200px;
+                width: 135px;
+                height: 135px;
             }
 
             .speedometer-needle {
@@ -434,6 +434,19 @@
                     <a href="/" class="back-link">← Back to Dashboard</a>
                     <h1 class="app-title">Pump {{ pump_id }}</h1>
                     <p class="app-subtitle">Real-time Monitoring</p>
+                </div>
+                <div class="header-nav">
+                    <select id="pump-select" class="pump-dropdown-header">
+                        <option value="">Select Pump</option>
+                        <option value="1">Pump 1</option>
+                        <option value="2">Pump 2</option>
+                        <option value="3">Pump 3</option>
+                        <option value="4">Pump 4</option>
+                        <option value="5">Pump 5</option>
+                        <option value="6">Pump 6</option>
+                        <option value="7">Pump 7</option>
+                    </select>
+                    <a href="/reports" class="nav-link nav-reports" id="reports-link">📊 Reports</a>
                 </div>
                 <div class="status-section">
                     <div class="status-indicator">
